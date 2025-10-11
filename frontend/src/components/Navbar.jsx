@@ -20,10 +20,13 @@ function Navbar() {
     fontWeight: 'bold',
   };
   return (
-    <nav >
+    <nav style ={{navStyle}}>
+      <div style={{ fontSize: '1.8em' }}>
+        <Link to="/" style={linkStyle}>ResuMatrix</Link>
+      </div>
       <ul>
         <li>
-          <Link to='/'>Home</Link>
+          <Link to='/' >Home</Link>
         </li>
         <li>
           <Link to='/About'>About</Link>
