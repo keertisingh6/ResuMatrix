@@ -3,9 +3,13 @@ import { optimizeResume, compileResume } from "./api";
 import JobDescription from "./components/JobDescription";
 import LatexResume from "./components/LatexResume";
 import ResumePreview from "./components/ResumePreview";
+import {Routes,Route} from 'react-router-dom';
+import Home from './pages/Home';
+import About from './pages/About';
 
 
 export default function App() {
+
   const [jobDescription, setJobDescription] = useState("");
   const [latex, setLatex] = useState(`\\documentclass{article}
 \\begin{document}
@@ -44,6 +48,13 @@ Hello, this is a sample resume.
   };
 
   return (
+    <>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          {/* Fallback 404 route */}
+          <Route path="*" element={<h2 style={{ padding: '40px', textAlign: 'center' }}>404 - Page Not Found</h2>} />
+        </Routes>
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="container mx-auto p-6 flex gap-6 min-h-screen">
         <JobDescription
@@ -56,5 +67,6 @@ Hello, this is a sample resume.
         <ResumePreview pdfUrl={pdfUrl} compiling={compiling} />
       </div>
     </div>
+    </>
   );
 }
