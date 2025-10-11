@@ -2,6 +2,17 @@
 
 First off, thank you for considering contributing to ResuMatrix! 🎉 It's people like you that make ResuMatrix such a great tool.
 
+## Branch Strategy 🌳
+
+This project follows a trunk-based development workflow:
+
+- `main` - Production releases only. No direct commits/PRs.
+- `develop` - Main development branch. All features/fixes target this branch.
+- `feature/*` - Feature branches, created from and merged back to develop.
+- `fix/*` - Bug fix branches, created from and merged back to develop.
+
+> **Golden Rule**: Always create your working branch from `develop` and target your PRs to `develop`.
+
 ## Code of Conduct
 
 By participating in this project, you are expected to uphold our Code of Conduct:
@@ -47,14 +58,19 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ### Development Process 👩‍💻
 
-1. Clone the repository
+> **IMPORTANT**: All development work should be done against the `develop` branch. The `main` branch is reserved for stable releases.
+
+1. Clone the repository and switch to develop branch
 ```bash
 git clone https://github.com/ZayedShahcode/ResuMatrix.git
+cd ResuMatrix
+git checkout develop
+git pull origin develop
 ```
 
-2. Create a branch for your feature
+2. Create your feature branch from develop
 ```bash
-git checkout -b feature/your-feature-name
+git checkout -b feature/your-feature-name develop
 ```
 
 3. Setup Development Environment
@@ -129,12 +145,33 @@ feat: add dark mode toggle
 
 ### Review Process 👀
 
-1. Create a Pull Request with a clear title and description
-2. Link any relevant issues
-3. Request review from maintainers
-4. Address review comments
-5. Update PR based on feedback
-6. Wait for approval and merge
+1. Push your changes to your fork
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Create a Pull Request:
+   - Base branch should be `develop` (not main)
+   - Provide a clear title and description
+   - Link any relevant issues
+   - Fill out the PR template completely
+
+3. PR Review Process:
+   - Request review from maintainers
+   - Address review comments promptly
+   - Keep the PR up-to-date with develop branch
+   - Update PR based on feedback
+   - Maintainers will merge approved PRs into develop
+
+> **Remember**: All PRs must target the `develop` branch. PRs targeting `main` directly will be rejected.
+
+4. After PR is merged:
+   - Delete your feature branch
+   - Pull the latest develop branch
+   ```bash
+   git checkout develop
+   git pull origin develop
+   ```
 
 ## Project Structure 📁
 
