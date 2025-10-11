@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { optimizeResume, compileResume } from "./api";
 import JobDescription from "./components/JobDescription";
 import LatexResume from "./components/LatexResume";
@@ -14,22 +14,21 @@ Hello, this is a sample resume.
   const [pdfUrl, setPdfUrl] = useState("");
   const [compiling, setCompiling] = useState(false);
   const [optimizing, setOptimizing] = useState(false);
+  const [hasCompiledAtLeastOnce, setHasCompiledAtLeastOnce] = useState(false);
 
-  useEffect(() => {
+  const handleCompile = async () => {
     setCompiling(true);
-    const timeout = setTimeout(async () => {
-      try {
-        const url = await compileResume(latex);
-        setPdfUrl(url);
-      } catch (err) {
-        console.error("Compile error:", err);
-        setPdfUrl("");
-      } finally {
-        setCompiling(false);
-      }
-    }, 2000);
-    return () => clearTimeout(timeout);
-  }, [latex]);
+    try {
+      const url = await compileResume(latex);
+      setPdfUrl(url);
+      setHasCompiledAtLeastOnce(true);
+    } catch (err) {
+      console.error("Compile error:", err);
+      setPdfUrl("");
+    } finally {
+      setCompiling(false);
+    }
+  };
 
   const handleOptimize = async () => {
     setOptimizing(true);
@@ -51,9 +50,20 @@ Hello, this is a sample resume.
           setJobDescription={setJobDescription}
         />
 
-        <LatexResume latex={latex} setLatex={setLatex} onOptimize={handleOptimize} optimizing={optimizing} />
+        <LatexResume
+          latex={latex}
+          setLatex={setLatex}
+          onOptimize={handleOptimize}
+          optimizing={optimizing}
+          onCompile={handleCompile}
+          compiling={compiling}
+        />
 
-        <ResumePreview pdfUrl={pdfUrl} compiling={compiling} />
+        <ResumePreview
+          pdfUrl={pdfUrl}
+          compiling={compiling}
+          hasCompiledAtLeastOnce={hasCompiledAtLeastOnce}
+        />
       </div>
     </div>
   );
