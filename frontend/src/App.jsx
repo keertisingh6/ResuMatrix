@@ -3,7 +3,7 @@ import { optimizeResume, compileResume } from "./api";
 import JobDescription from "./components/JobDescription";
 import LatexResume from "./components/LatexResume";
 import ResumePreview from "./components/ResumePreview";
-
+import { Moon, Sun } from "lucide-react";
 
 export default function App() {
   const [jobDescription, setJobDescription] = useState("");
@@ -15,6 +15,30 @@ Hello, this is a sample resume.
   const [compiling, setCompiling] = useState(false);
   const [optimizing, setOptimizing] = useState(false);
 
+  const [darkMode, setDarkMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") setDarkMode(true);
+
+    setMounted(true);
+  }, []);
+
+ 
+  useEffect(() => {
+    if (!mounted) return;
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    const themeToStore = darkMode ? "dark" : "light";
+    localStorage.setItem("theme", themeToStore);
+  }, [darkMode, mounted]);
+
+  // Compile LaTeX
   useEffect(() => {
     setCompiling(true);
     const timeout = setTimeout(async () => {
@@ -42,19 +66,42 @@ Hello, this is a sample resume.
       setOptimizing(false);
     }
   };
+  if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-500 relative">
       <div className="container mx-auto p-6 flex gap-6 min-h-screen">
         <JobDescription
           jobDescription={jobDescription}
           setJobDescription={setJobDescription}
         />
-
-        <LatexResume latex={latex} setLatex={setLatex} onOptimize={handleOptimize} optimizing={optimizing} />
-
+        <LatexResume
+          latex={latex}
+          setLatex={setLatex}
+          onOptimize={handleOptimize}
+          optimizing={optimizing}
+        />
         <ResumePreview pdfUrl={pdfUrl} compiling={compiling} />
       </div>
+
+      {/* Theme Toggle Button */}
+      <button
+        onClick={() => setDarkMode(!darkMode)}
+        className={`fixed bottom-6 left-6 rounded-full p-3 border cursor-pointer
+              transition-all duration-300 ease-in-out hover:scale-110
+              ${
+                darkMode
+                  ? "bg-gray-800 text-gray-100 border-gray-700 hover:shadow-[0_0_15px_3px_rgba(255,215,0,0.6)]"
+                  : "bg-gray-300 text-gray-800 border-gray-400 hover:shadow-[0_0_15px_3px_rgba(100,149,237,0.6)]"
+              }`}
+        title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+      >
+        {darkMode ? (
+          <Sun className="h-5 w-5 text-yellow-400 transition-colors duration-300 ease-in-out hover:text-yellow-500" />
+        ) : (
+          <Moon className="h-5 w-5 text-slate-700 transition-colors duration-300 ease-in-out hover:text-slate-900" />
+        )}
+      </button>
     </div>
   );
 }
