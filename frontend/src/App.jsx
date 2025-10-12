@@ -35,6 +35,7 @@ Hello, this is a sample resume.
     try {
       const optimized = await optimizeResume(jobDescription, latex);
       setLatex(optimized);
+      await handleCompile(); // compiling resume automatically once its optimized;
     } catch (err) {
       console.error("Optimize error:", err);
     } finally {
