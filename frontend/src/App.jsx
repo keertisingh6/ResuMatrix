@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { optimizeResume, compileResume } from "./api";
 import JobDescription from "./components/JobDescription";
 import LatexResume from "./components/LatexResume";
@@ -14,7 +14,29 @@ Hello, this is a sample resume.
   const [pdfUrl, setPdfUrl] = useState("");
   const [compiling, setCompiling] = useState(false);
   const [optimizing, setOptimizing] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const [hasCompiledAtLeastOnce, setHasCompiledAtLeastOnce] = useState(false);
+
+
+    useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") setDarkMode(true);
+
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    const themeToStore = darkMode ? "dark" : "light";
+    localStorage.setItem("theme", themeToStore);
+  }, [darkMode, mounted]);
 
   const handleCompile = async () => {
     setCompiling(true);

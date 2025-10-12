@@ -10,7 +10,7 @@ export default function LatexResume({ latex, setLatex, onOptimize, optimizing, o
             onClick={onOptimize}
             disabled={optimizing}
             className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white 
-                     px-4 py-2 rounded-lg font-medium shadow-sm hover:shadow
+                     px-4 py-2 rounded-lg text-xs mx-2 w-20 h-10 font-medium shadow-sm hover:shadow
                      transform transition-all duration-200 hover:-translate-y-0.5
                      active:translate-y-0 cursor-pointer disabled:cursor-not-allowed
                      flex items-center gap-2"
@@ -31,7 +31,7 @@ export default function LatexResume({ latex, setLatex, onOptimize, optimizing, o
             onClick={onCompile}
             disabled={compiling}
             className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white 
-                     px-4 py-2 rounded-lg font-medium shadow-sm hover:shadow
+                     px-4 py-2 rounded-lg font-medium text-xs mx-2 w-20 h-10 shadow-sm hover:shadow
                      transform transition-all duration-200 hover:-translate-y-0.5
                      active:translate-y-0 cursor-pointer disabled:cursor-not-allowed
                      flex items-center gap-2"
