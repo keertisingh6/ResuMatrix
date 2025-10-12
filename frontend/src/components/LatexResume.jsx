@@ -2,9 +2,9 @@ import React from "react";
 
 export default function LatexResume({ latex, setLatex, onOptimize, optimizing, onCompile, compiling }) {
   return (
-    <div className="w-1/3 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-      <div className="p-4 border-b border-slate-100 flex justify-between items-center gap-3">
-        <h2 className="text-lg font-semibold text-slate-800">Resume LaTeX</h2>
+   <div className="w-1/3 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 flex flex-col overflow-hidden transition-colors duration-500">
+      <div className="p-4 border-b border-slate-100 dark:border-gray-700 flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-slate-800  dark:text-gray-100">Resume LaTeX</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={onOptimize}
@@ -50,14 +50,14 @@ export default function LatexResume({ latex, setLatex, onOptimize, optimizing, o
           </button>
         </div>
       </div>
-      <div className="p-4 flex-1 bg-slate-50">
+      <div className="p-4 flex-1 bg-slate-50 dark:bg-gray-900 transition-colors duration-500">
         <textarea
           value={latex}
           onChange={(e) => setLatex(e.target.value)}
-          className="w-full h-full min-h-[500px] p-3 rounded-lg border border-slate-200
-                   font-mono text-sm bg-white resize-none focus:ring-2 
-                   focus:ring-blue-500 focus:border-blue-500 outline-none
-                   transition-shadow"
+          className="w-full h-full min-h-[500px] p-3 rounded-lg border border-slate-200 dark:border-gray-700
+                     font-mono text-sm bg-white dark:bg-gray-800 text-slate-800 dark:text-gray-100
+                     resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none
+                     transition-colors duration-500"
           placeholder="LaTeX code here..."
         />
       </div>
