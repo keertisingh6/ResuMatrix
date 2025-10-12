@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { optimizeResume, compileResume } from "./api";
 import JobDescription from "./components/JobDescription";
 import LatexResume from "./components/LatexResume";
@@ -14,52 +14,28 @@ Hello, this is a sample resume.
   const [pdfUrl, setPdfUrl] = useState("");
   const [compiling, setCompiling] = useState(false);
   const [optimizing, setOptimizing] = useState(false);
+  const [hasCompiledAtLeastOnce, setHasCompiledAtLeastOnce] = useState(false);
 
-  const [darkMode, setDarkMode] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark") setDarkMode(true);
-
-    setMounted(true);
-  }, []);
-
- 
-  useEffect(() => {
-    if (!mounted) return;
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
-    const themeToStore = darkMode ? "dark" : "light";
-    localStorage.setItem("theme", themeToStore);
-  }, [darkMode, mounted]);
-
-  // Compile LaTeX
-  useEffect(() => {
+  const handleCompile = async () => {
     setCompiling(true);
-    const timeout = setTimeout(async () => {
-      try {
-        const url = await compileResume(latex);
-        setPdfUrl(url);
-      } catch (err) {
-        console.error("Compile error:", err);
-        setPdfUrl("");
-      } finally {
-        setCompiling(false);
-      }
-    }, 2000);
-    return () => clearTimeout(timeout);
-  }, [latex]);
+    try {
+      const url = await compileResume(latex);
+      setPdfUrl(url);
+      setHasCompiledAtLeastOnce(true);
+    } catch (err) {
+      console.error("Compile error:", err);
+      setPdfUrl("");
+    } finally {
+      setCompiling(false);
+    }
+  };
 
   const handleOptimize = async () => {
     setOptimizing(true);
     try {
       const optimized = await optimizeResume(jobDescription, latex);
       setLatex(optimized);
+      await handleCompile(); // compiling resume automatically once its optimized;
     } catch (err) {
       console.error("Optimize error:", err);
     } finally {
@@ -75,13 +51,21 @@ Hello, this is a sample resume.
           jobDescription={jobDescription}
           setJobDescription={setJobDescription}
         />
+
         <LatexResume
           latex={latex}
           setLatex={setLatex}
           onOptimize={handleOptimize}
           optimizing={optimizing}
+          onCompile={handleCompile}
+          compiling={compiling}
         />
-        <ResumePreview pdfUrl={pdfUrl} compiling={compiling} />
+
+        <ResumePreview
+          pdfUrl={pdfUrl}
+          compiling={compiling}
+          hasCompiledAtLeastOnce={hasCompiledAtLeastOnce}
+        />
       </div>
 
       {/* Theme Toggle Button */}
