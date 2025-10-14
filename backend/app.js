@@ -4,16 +4,37 @@ import fs from "fs";
 import path from "path";
 import { exec } from "child_process";
 import dotenv from "dotenv";
+import { fileURLToPath } from "url";
 import {clearFolder} from "./utils/clearFolder.js";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const app = express();
 dotenv.config();
-app.use(express.json({ limit: "5mb" }));
-app.use(cors("*"));
 
-const tmpDir = "D:/Projects/ResuMatrix/backend/tmp";
+// Validate required environment variables
+if (!process.env.GEMINI_API_KEY) {
+  console.error("ERROR: GEMINI_API_KEY is not set in environment variables");
+  console.error("Please create a .env file in the backend directory with GEMINI_API_KEY=your_api_key_here");
+  process.exit(1);
+}
+
+app.use(express.json({ limit: "5mb" }));
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true
+}));
+
+// Get current directory in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const tmpDir = path.join(__dirname, "tmp");
+
+// Ensure tmp directory exists
+if (!fs.existsSync(tmpDir)) {
+  fs.mkdirSync(tmpDir, { recursive: true });
+  console.log(`Created tmp directory at: ${tmpDir}`);
+}
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
