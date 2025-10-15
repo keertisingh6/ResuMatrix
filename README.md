@@ -27,9 +27,24 @@ ResuMatrix is an intelligent resume optimization tool that helps you tailor your
 ## Getting Started 🏁
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- LaTeX installation (TeX Live or MiKTeX)
-- Google AI API key (for Gemini)
+
+1. **Node.js**
+   - Install Node.js v18 or higher from [nodejs.org](https://nodejs.org/)
+   - Verify installation: `node --version`
+
+2. **MiKTeX (LaTeX Compiler)**
+   - Download MiKTeX from [miktex.org/download](https://miktex.org/download)
+   - During installation:
+     - Select "Install missing packages on the fly = Yes"
+     - Choose "Preferred paper: A4" or "Letter" based on your needs
+   - After installation, open MiKTeX Console and:
+     - Check for updates: Updates → Check for updates
+     - Install any available updates
+   - Verify installation: `pdflatex --version`
+
+3. **Google AI API Key**
+   - Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Keep this key handy for the setup
 
 ### Installation
 
@@ -71,6 +86,32 @@ npm run dev
 ```
 
 The application will be available at `http://localhost:5173`
+
+### Troubleshooting Common Setup Issues
+
+1. **LaTeX Compilation Fails**
+   ```
+   Solution: Open MiKTeX Console and:
+   1. Check 'Updates' for any pending package updates
+   2. Go to 'Packages' and ensure basic packages are installed
+   3. Try compiling again
+   ```
+
+2. **PDF Preview Not Working**
+   ```
+   1. Check if pdflatex is in your system PATH
+   2. Verify tmp folder exists in backend directory
+   3. Ensure proper file permissions
+   ```
+
+3. **Node.js Related Issues**
+   ```
+   1. Clear node_modules and package-lock.json
+   2. Run npm install again
+   3. Ensure compatible Node version (v18+)
+   ```
+
+For more detailed troubleshooting, check our [CONTRIBUTING.md](CONTRIBUTING.md) guide.
 
 ## Usage 📝
 

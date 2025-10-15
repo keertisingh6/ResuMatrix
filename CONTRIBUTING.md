@@ -74,15 +74,55 @@ git checkout -b feature/your-feature-name develop
 ```
 
 3. Setup Development Environment
-```bash
-# Frontend
-cd frontend
-npm install
 
-# Backend
-cd ../backend
-npm install
-```
+#### Environment Setup
+1. **Install Node.js**
+   ```bash
+   # Verify Node.js installation
+   node --version  # Should be 18 or higher
+   npm --version
+   ```
+
+2. **Install MiKTeX**
+   - Download from [miktex.org/download](https://miktex.org/download)
+   - Installation steps:
+     ```
+     1. Run installer with admin privileges
+     2. Choose "Install missing packages on the fly = Yes"
+     3. After installation, open MiKTeX Console
+     4. Install basic packages and updates
+     5. Verify installation:
+        pdflatex --version
+     ```
+   - Common MiKTeX issues:
+     - If packages fail to install, try running MiKTeX Console as administrator
+     - Keep your MiKTeX installation updated via MiKTeX Console
+
+3. **Install Dependencies**
+   ```bash
+   # Frontend
+   cd frontend
+   npm install
+
+   # Backend
+   cd ../backend
+   npm install
+   ```
+
+4. **Configure Environment**
+   ```bash
+   # In backend directory
+   cp .env.example .env
+   # Edit .env and add your Google AI API key
+   ```
+
+5. **Verify Setup**
+   ```bash
+   # Test LaTeX compilation
+   cd backend
+   mkdir -p tmp  # Create tmp directory if it doesn't exist
+   pdflatex -version  # Should show MiKTeX version
+   ```
 
 4. Make your changes and test them thoroughly
 
