@@ -6,8 +6,12 @@ import { exec } from "child_process";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import {clearFolder} from "./utils/clearFolder.js";
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
+
+// Import middleware
+import { validateCompile, validateOptimize } from "./middleware/validation.js";
+import { compileRateLimiter, optimizeRateLimiter, generalRateLimiter } from "./middleware/rateLimiter.js";
+import { errorHandler, notFoundHandler, asyncHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 dotenv.config();
@@ -19,11 +23,15 @@ if (!process.env.GEMINI_API_KEY) {
   process.exit(1);
 }
 
+// Middleware
 app.use(express.json({ limit: "5mb" }));
 app.use(cors({
   origin: process.env.FRONTEND_URL || "http://localhost:5173",
   credentials: true
 }));
+
+// Apply general rate limiting to all routes
+app.use(generalRateLimiter);
 
 // Get current directory in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -38,8 +46,17 @@ if (!fs.existsSync(tmpDir)) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    message: "ResuMatrix API is running",
+    timestamp: new Date().toISOString()
+  });
+});
+
 // ----------------------- Compile LaTeX -----------------------
-app.post("/api/compile", async (req, res) => {
+app.post("/api/compile", compileRateLimiter, validateCompile, asyncHandler(async (req, res) => {
   const tex = req.body.code;
   const texPath = path.join(tmpDir, "resume.tex");
   const pdfPath = path.join(tmpDir, "resume.pdf");
@@ -47,6 +64,7 @@ app.post("/api/compile", async (req, res) => {
   fs.writeFileSync(texPath, tex);
 
   const command = `pdflatex -interaction=nonstopmode -output-directory=${tmpDir} ${texPath}`;
+  
   exec(command, async(err, stdout, stderr) => {
     console.log("LaTeX log:\n", stdout);
 
@@ -57,15 +75,16 @@ app.post("/api/compile", async (req, res) => {
       res.send(pdf);
     } else {
       res.status(500).json({
+        success: false,
         message: "LaTeX compilation failed",
         error: stderr || stdout || err?.message,
       });
     }
   });
-});
+}));
 
 // ----------------------- Optimize Resume -----------------------
-app.post("/api/optimize", async (req, res) => {
+app.post("/api/optimize", optimizeRateLimiter, validateOptimize, asyncHandler(async (req, res) => {
   const { jobDescription, resumeLatex } = req.body;
 
 const prompt = `
@@ -100,11 +119,25 @@ ${resumeLatex}
     let optimizedLatex = result.response.text().replaceAll("```","");
     optimizedLatex = optimizedLatex.replace("latex","");
 
-    res.json({ optimizedLatex });
+    res.json({ 
+      success: true,
+      optimizedLatex 
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error optimizing resume");
+    console.error('AI Optimization Error:', err);
+    throw new Error("Failed to optimize resume. Please try again later.");
   }
-});
+}));
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+// 404 handler for undefined routes
+app.use(notFoundHandler);
+
+// Error handling middleware (must be last)
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✓ Server running on port ${PORT}`);
+  console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`✓ CORS origin: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+});
